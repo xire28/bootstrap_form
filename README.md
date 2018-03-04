@@ -22,7 +22,7 @@ Add it to your Gemfile:
 
 ```ruby
 gem "bootstrap_form",
-    git: "https://github.com/bootstrap-ruby/bootstrap_form.git",
+    git: "https://github.com/xire28/bootstrap_form.git",
     branch: "master"
 ```
 
