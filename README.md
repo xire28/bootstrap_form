@@ -12,8 +12,8 @@ Bootstrap v4-style forms into your Rails application.
 
 ## Requirements
 
-* Ruby 2.2.2+
-* Rails 5.0+ (Rails 5.1+ for `bootstrap_form_with`)
+* Ruby 2.0+
+* Rails 4.0+ (Rails 5.1+ for `bootstrap_form_with`)
 * Bootstrap 4.0.0+
 
 ## Installation
