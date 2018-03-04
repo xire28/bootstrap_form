@@ -519,6 +519,14 @@ module BootstrapForm
                                       checked == obj                             ||
                                       Array(checked).try(:include?, obj)
           end
+          
+          if disabled = input_options[:disabled]
+            input_options[:disabled] = if disabled.is_a?(Array)
+                                          disabled.include?(input_value)
+                                       else
+                                          disabled
+                                       end
+          end
 
           input_options.delete(:class)
           inputs << block.call(name, input_value, input_options)
