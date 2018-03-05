@@ -428,6 +428,7 @@ module BootstrapForm
         form_group_options[:label] = {
           text: label_text,
           class: label_class,
+          required: options.delete(:required),
           skip_required: options.delete(:skip_required)
         }.merge(css_options[:id].present? ? { for: css_options[:id] } : {})
       end
@@ -461,7 +462,7 @@ module BootstrapForm
       end
 
       unless options.delete(:skip_required)
-        classes << "required" if required_attribute?(object, name)
+        classes << "required" if options[:required] || required_attribute?(object, name)
       end
 
       options[:class] = classes.compact.join(" ").strip
