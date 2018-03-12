@@ -12,8 +12,6 @@ module BootstrapForm
     end
 
     def bootstrap_form_tag(options = {}, &block)
-      options[:acts_like_form_tag] = true
-
       bootstrap_form_for(options[:as].to_s, options, &block)
     end
 

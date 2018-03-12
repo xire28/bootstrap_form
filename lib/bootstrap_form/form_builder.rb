@@ -6,7 +6,7 @@ module BootstrapForm
     extend BootstrapForm::Aliasing
     include BootstrapForm::Helpers::Bootstrap
 
-    attr_reader :layout, :label_col, :control_col, :has_error, :inline_errors, :label_errors, :acts_like_form_tag
+    attr_reader :layout, :label_col, :control_col, :has_error, :inline_errors, :label_errors
 
     FIELD_HELPERS = %w{color_field date_field datetime_field datetime_local_field
       email_field month_field number_field password_field phone_field
@@ -27,7 +27,6 @@ module BootstrapForm
       else
         options[:inline_errors] != false
       end
-      @acts_like_form_tag = options[:acts_like_form_tag]
 
       super
     end
@@ -385,8 +384,6 @@ module BootstrapForm
       css_options[:class] = [control_classes, css_options[:class]].compact.join(" ")
       css_options[:class] << " is-invalid" if has_error?(method)
 
-      options = convert_form_tag_options(method, options) if acts_like_form_tag
-
       wrapper_class = css_options.delete(:wrapper_class)
       wrapper_options = css_options.delete(:wrapper)
       help = options.delete(:help)
@@ -447,11 +444,6 @@ module BootstrapForm
     end
 
     def generate_label(id, name, options, custom_label_col, group_layout)
-      # id is the caller's options[:id] at the only place this method is called.
-      # The options argument is a small subset of the options that might have
-      # been passed to generate_label's caller, and definitely doesn't include
-      # :id.
-      options[:for] = id if acts_like_form_tag
       classes = [options[:class]]
 
       if layout_horizontal?(group_layout)
