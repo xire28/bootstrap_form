@@ -133,10 +133,10 @@ module BootstrapForm
       label_name = name
       # label's `for` attribute needs to match checkbox tag's id,
       # IE sanitized value, IE
-      # https://github.com/rails/rails/blob/c57e7239a8b82957bcb07534cb7c1a3dcef71864/actionview/lib/action_view/helpers/tags/base.rb#L116-L118
+      # https://github.com/rails/rails/blob/5-0-stable/actionview/lib/action_view/helpers/tags/base.rb#L123-L125
       if options[:multiple]
         label_name =
-          "#{name}_#{checked_value.to_s.gsub(/\s/, "_").gsub(/[^-\w]/, "").downcase}"
+          "#{name}_#{checked_value.to_s.gsub(/\s/, "_").gsub(/[^-[[:word:]]]/, "").mb_chars.downcase.to_s}"
       end
 
       label_classes = [options[:label_class]]
@@ -253,20 +253,20 @@ module BootstrapForm
         label = generate_label(options[:id], name, options[:label], options[:label_col], options[:layout]) if options[:label]
         control = prepend_and_append_input(name, options, &block).to_s
 
+        help = options[:help]
+        help_text = generate_help(name, help).to_s
+
         if get_group_layout(options[:layout]) == :horizontal
           control_class = options[:control_col] || control_col
           unless options[:label]
             control_offset = offset_col(options[:label_col] || @label_col)
             control_class = "#{control_class} #{control_offset}"
           end
-          control = content_tag(:div, control, class: control_class)
+          control = content_tag(:div, control + help_text, class: control_class)
+          concat(label).concat(control)
+        else
+          concat(label).concat(control).concat(help_text)
         end
-
-        help = options[:help]
-
-        help_text = generate_help(name, help).to_s
-
-        concat(label).concat(control).concat(help_text)
       end
     end
 
@@ -463,6 +463,7 @@ module BootstrapForm
       if label_errors && has_error?(name)
         error_messages = get_error_messages(name)
         label_text = (options[:text] || object.class.human_attribute_name(name)).to_s.concat(" #{error_messages}")
+        options[:class] = [options[:class], "text-danger"].compact.join(" ")
         label(name, label_text, options.except(:text))
       else
         label(name, options[:text], options.except(:text))
@@ -540,7 +541,13 @@ module BootstrapForm
 
         underscored_scope = "activerecord.help.#{partial_scope.underscore}"
         downcased_scope = "activerecord.help.#{partial_scope.downcase}"
-        help_text = I18n.t(name, scope: underscored_scope, default: '').presence
+        # First check for a subkey :html, as it is also accepted by i18n, and the simple check for name would return an hash instead of a string (both with .presence returning true!)
+        help_text = I18n.t("#{name}.html", scope: underscored_scope, default: '').html_safe.presence
+        help_text ||= if text = I18n.t("#{name}.html", scope: downcased_scope, default: '').html_safe.presence
+                        warn "I18n key '#{downcased_scope}.#{name}' is deprecated, use '#{underscored_scope}.#{name}' instead"
+                        text
+                      end
+        help_text ||= I18n.t(name, scope: underscored_scope, default: '').presence
         help_text ||= if text = I18n.t(name, scope: downcased_scope, default: '').presence
                         warn "I18n key '#{downcased_scope}.#{name}' is deprecated, use '#{underscored_scope}.#{name}' instead"
                         text
