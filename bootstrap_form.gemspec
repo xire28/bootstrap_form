@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "bootstrap_form/version"
 
 Gem::Specification.new do |s|
-  s.name        = "bootstrap_form"
+  s.name        = "bootstrap_form_legacy"
   s.version     = BootstrapForm::VERSION
   s.authors     = ["Stephen Potenza", "Carlos Lopes"]
   s.email       = ["potenza@gmail.com", "carlos.el.lopes@gmail.com"]
@@ -22,5 +22,5 @@ Gem::Specification.new do |s|
   s.bindir        = "exe"
   s.require_paths = ["lib"]
 
-  s.add_dependency "rails", ">= 4.0"
+  s.add_dependency "rails", "~> 4.0"
 end
